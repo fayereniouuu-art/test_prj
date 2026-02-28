@@ -27,6 +27,7 @@ app.use("/usr", user);
 // app.use("/adm", admin);
 app.use("/dpt", department);
 app.use("/ac", apply_ac);
-app.listen(port, () => {
-    console.log('ERP Running as port '+port);
-})
+const PORT = process.env.PORT || 3700;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
