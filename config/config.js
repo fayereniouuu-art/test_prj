@@ -1,4 +1,4 @@
-const mysql = require("mysql");
+const mysql = require("mysql2");
 require('dotenv').config();
 
 const con = mysql.createPool({
@@ -30,3 +30,4 @@ con.getConnection(function(err, connection) {
 });
 
 module.exports = con;
+
