@@ -24,10 +24,11 @@ app.use("/acr", coor);
 app.use("/rt", route_type);
 app.use("/rou", route);
 app.use("/usr", user);
-// app.use("/adm", admin);
+app.use("/adm", admin);
 app.use("/dpt", department);
 app.use("/ac", apply_ac);
 const PORT = process.env.PORT || 3700;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
