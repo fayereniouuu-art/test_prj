@@ -43,7 +43,7 @@ router.get('/buildings_by_type/:typeId', async (req, res) => {
     }
 });
 
-// 🟢 [เพิ่มใหม่] GET: ดึงข้อมูลอาคารปลายทางทั้งหมดที่สามารถเดินไปได้จากจุดเริ่มต้น (แก้ Error 404)
+// 🟢 GET: ดึงข้อมูลอาคารปลายทางทั้งหมดที่สามารถเดินไปได้จากจุดเริ่มต้น (สำหรับ Dropdown ช่องที่ 3)
 router.get('/connected_buildings/:startId/:typeId', async (req, res) => {
     try {
         const { startId, typeId } = req.params;
@@ -61,7 +61,6 @@ router.get('/connected_buildings/:startId/:typeId', async (req, res) => {
             ORDER BY b.building_name ASC;
         `;
         
-        // ส่ง parameters เข้าไป: [typeId, typeId, startId]
         const results = await query(sqlQuery, [typeId, typeId, startId]);
         
         return res.status(200).send({ status: 'success', data: results });
@@ -71,6 +70,32 @@ router.get('/connected_buildings/:startId/:typeId', async (req, res) => {
     }
 });
 
-// --- ถ้ามีฟังก์ชันอื่นๆ เช่น /find_route ต่อจากนี้ ให้คงไว้ตามเดิมได้เลยครับ ---
+// 🟢 GET: ค้นหาพิกัดเส้นทางระหว่างจุดเริ่มต้นและปลายทาง (สำหรับปุ่มค้นหาและวาดเส้น)
+router.get('/find_route/:startId/:endId/:typeId', async (req, res) => {
+    try {
+        const { startId, endId, typeId } = req.params;
+        
+        // ค้นหาเส้นทางที่ตรงกับประเภท และจุดเริ่มต้น-ปลายทาง (สลับไปมาได้)
+        const sqlQuery = `
+            SELECT route_points, route_color, start_building_id 
+            FROM routes 
+            WHERE route_type_id = ? 
+              AND ((start_building_id = ? AND end_building_id = ?) 
+                   OR (start_building_id = ? AND end_building_id = ?))
+            LIMIT 1;
+        `;
+        
+        const results = await query(sqlQuery, [typeId, startId, endId, endId, startId]);
+        
+        if (results && results.length > 0) {
+            return res.status(200).send({ status: 'success', data: results[0] });
+        } else {
+            return res.status(404).send({ status: 'error', message: 'ไม่พบข้อมูลเส้นทางที่เชื่อมต่อกันในระบบ' });
+        }
+    } catch (error) {
+        console.error('Error in /find_route:', error);
+        return res.status(500).send({ status: 'error', message: 'Error finding route' });
+    }
+});
 
 module.exports = router;
