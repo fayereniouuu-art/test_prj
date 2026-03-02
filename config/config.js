@@ -8,7 +8,7 @@ const con = mysql.createPool({
     port: process.env.MYSQL_PORT || 10306, 
     user: process.env.MYSQL_USER, 
     password: process.env.MYSQL_PASSWORD, 
-    database: process.env.MYSQL_DATABASE || 'defaultdb', 
+    database: 'defaultdb', 
     
     // ⭐ ส่วนสำคัญ: บังคับใช้ SSL เพื่อเชื่อมต่อกับ Aiven Cloud
     ssl: {
@@ -46,3 +46,4 @@ con.on('error', (err) => {
 });
 
 module.exports = con;
+
