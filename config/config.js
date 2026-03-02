@@ -513,4 +513,32 @@ router.put('/reference_point/:id', verifyToken, isAdmin, async (req, res) => {
     }
 });
 
+/*-----------------------------------------------------------------------------------------------------------------------------*/
+// GET: ดึงข้อมูลอาคารเฉพาะที่ถูกใช้งานในเส้นทาง (สำหรับหน้าพิมพ์ QR Code)
+/*-----------------------------------------------------------------------------------------------------------------------------*/
+router.get('/active_route_points', async (req, res) => {
+    try {
+        const sqlQuery = `
+            SELECT building_id, building_name 
+            FROM \`building\` 
+            WHERE building_id IN (
+                SELECT start_building_id FROM \`routes\` WHERE start_building_id IS NOT NULL
+                UNION
+                SELECT end_building_id FROM \`routes\` WHERE end_building_id IS NOT NULL
+            )
+            AND building_name IS NOT NULL 
+            AND TRIM(building_name) != ''
+            ORDER BY building_name ASC
+        `;
+
+        const results = await query(sqlQuery);
+        res.status(200).send({ status: "success", data: results });
+
+    } catch (error) {
+        console.error('Error in /active_route_points (GET):', error);
+        res.status(500).send({ status: "error", message: "เกิดข้อผิดพลาดในการดึงข้อมูลอาคารในเส้นทาง" });
+    }
+});
+
 module.exports = router;
+
