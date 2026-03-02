@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const con = require('../config/db'); // ดึงจากโฟลเดอร์ config/db.js
+const con = require('../config/config');
 const multer = require('multer');
 const upload = multer();
 
@@ -898,6 +898,5 @@ router.post('/checkData', verifyToken, isAdmin, async (req, res) => {
         });
     }
 });
-
 
 module.exports = router;
