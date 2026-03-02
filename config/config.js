@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const con = require('../config/config');
+const con = require('./db');
 const { promisify } = require('util');
 
 app.use(cors());
@@ -541,4 +541,5 @@ router.get('/active_route_points', async (req, res) => {
 });
 
 module.exports = router;
+
 
