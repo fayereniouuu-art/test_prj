@@ -142,7 +142,7 @@ router.delete('/building/:id', verifyToken, isAdmin, async (req, res) => {
 
 router.get('/reference_points', async (req, res) => {
     try {
-        // เพิ่ม Subquery ดึงสถานะการมีเส้นทาง (has_route) ทั้งจุดเริ่มต้นและปลายทาง
+        // อัปเดต Subquery เพื่อเช็คจากตาราง route ด้วย start_building_id หรือ end_building_id
         const sqlQuery = `
             SELECT 
                 rp.reference_points_id,
@@ -153,7 +153,7 @@ router.get('/reference_points', async (req, res) => {
                 rp.corner3_coord_x, rp.corner3_coord_y,
                 rp.corner4_coord_x, rp.corner4_coord_y,
                 rp.building_image_path,
-                (SELECT COUNT(*) FROM \`routes\` WHERE \`routes\`.start_building_id = rp.building_id OR \`routes\`.end_building_id = rp.building_id) > 0 AS has_route
+                (SELECT COUNT(*) FROM \`route\` WHERE \`route\`.start_building_id = rp.building_id OR \`route\`.end_building_id = rp.building_id) > 0 AS has_route
             FROM \`reference_points\` rp
             JOIN \`building\` b ON rp.building_id = b.building_id
             ORDER BY b.building_name ASC
